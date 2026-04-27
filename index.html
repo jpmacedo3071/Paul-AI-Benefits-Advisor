@@ -173,7 +173,19 @@
     );
   }
 
-  ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+  // Wait for all external JSX components to finish loading before rendering
+  function waitForComponents(names, callback, interval = 50) {
+    if (names.every(n => typeof window[n] !== 'undefined')) {
+      callback();
+    } else {
+      setTimeout(() => waitForComponents(names, callback, interval), interval);
+    }
+  }
+
+  waitForComponents(
+    ['Header', 'Hero', 'TrustStrip', 'ChatWidget', 'FAQ', 'Footer'],
+    () => ReactDOM.createRoot(document.getElementById("app")).render(<App />)
+  );
 </script>
 
 </body>
